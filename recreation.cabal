@@ -1,0 +1,29 @@
+cabal-version:      3.4
+name:               recreation
+version:            0.1.0.0
+license-file:       LICENSE
+build-type:         Simple
+
+common warnings
+    ghc-options: -Wall
+
+executable recreation
+    import:           warnings
+    main-is:          Main.hs
+    other-modules:
+        MissionariesCannibals,
+        NPuzzle,
+        Problem,
+    build-depends:
+      base ^>=4.18.2.0,
+      containers,
+      mtl,
+      terminal,
+      text,
+      vector,
+    hs-source-dirs:   src
+    default-language: GHC2021
+    default-extensions:
+        OverloadedRecordDot,
+        OverloadedStrings
+
