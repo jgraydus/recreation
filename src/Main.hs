@@ -6,6 +6,7 @@ import Data.Map (Map)
 import Data.Map qualified as Map
 import Data.Text (Text)
 import Data.Text (pack, unpack)
+import FindPath qualified
 import MissionariesCannibals qualified
 import NPuzzle qualified
 import Problem
@@ -15,6 +16,7 @@ problems :: Map Int Problem
 problems = Map.fromList
   [ (1, MissionariesCannibals.problem)
   , (2, NPuzzle.problem)
+  , (3, FindPath.problem)
   ]
 
 menu ::
@@ -52,10 +54,11 @@ menu selected info = do
           Right (KeyEvent (ArrowKey Upwards) _) -> menu (max 1 (selected - 1)) Nothing
           Right (KeyEvent (ArrowKey Downwards) _) -> menu (min (Map.size problems) (selected + 1)) Nothing
           Right (KeyEvent EnterKey _) -> pure selected
-          Right (KeyEvent (CharKey 'i') _) ->
-            let Just Problem { label, description } = Map.lookup selected problems;
-                desc = label <> " - " <> description
-             in menu selected (Just desc)
+          Right (KeyEvent (CharKey 'i') _) -> case Map.lookup selected problems of
+            Nothing -> menu selected Nothing
+            Just Problem { label, description } ->
+               let desc = label <> " - " <> description
+                in menu selected (Just desc)
           _ -> handleInput
   handleInput
 
@@ -66,8 +69,10 @@ main = withTerminal $ runTerminalT $ do
   selection <- menu 1 Nothing
   showCursor
   setAlternateScreenBuffer False
-  let Just Problem { label, run } = Map.lookup selection problems
-  liftIO $ do
-    putStrLn $ unpack label
-    run
+  case Map.lookup selection problems of
+    Nothing -> pure ()
+    Just Problem { label, run } ->
+      liftIO $ do
+        putStrLn $ unpack label
+        run
 

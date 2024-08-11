@@ -13,17 +13,21 @@ executable recreation
     other-modules:
         MissionariesCannibals,
         NPuzzle,
+        FindPath,
         Problem,
     build-depends:
       base ^>=4.18.2.0,
       containers,
       mtl,
+      pqueue,
       terminal,
       text,
       vector,
     hs-source-dirs:   src
     default-language: GHC2021
     default-extensions:
+        DuplicateRecordFields,
+        LambdaCase,
         OverloadedRecordDot,
         OverloadedStrings
 
