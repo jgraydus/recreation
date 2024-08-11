@@ -3,7 +3,7 @@ module NPuzzle ( problem ) where
 import Data.Function ((&))
 import Data.Functor.Identity (runIdentity)
 import Data.List (intercalate)
-import Data.Maybe (catMaybes, listToMaybe)
+import Data.Maybe (catMaybes, fromMaybe, listToMaybe)
 import Data.Set (Set)
 import Data.Set qualified as Set
 import Data.Sequence (Seq(..), (><))
@@ -50,7 +50,7 @@ neighbors w@World { dat, width, height } = runIdentity $ do
   let toIdx (x, y) = y * width + x
       fromIdx i = quotRem i width
       hole = fromIntegral $ width * height - 1
-      Just holeIdx = V.findIndex (== hole) dat
+      holeIdx = fromMaybe (error "hole is missing") $ V.findIndex (== hole) dat
       (holeX, holeY) = fromIdx holeIdx
       applyDiff (x,y) = (holeX+x,holeY+y)
       isValid (x,y) = x >= 0 && x < width && y >= 0 && y < height
@@ -75,7 +75,6 @@ dfs visited w =
        & fmap (w:)                            -- add the current world to the path
 
 bfs :: Seq [World] -> Maybe Solution
-bfs Empty = Nothing
 bfs (s@(w:_) :<| queue) =
   if isGoal w then Just (reverse s)
   else neighbors w                            -- compute the neighbors
@@ -84,9 +83,13 @@ bfs (s@(w:_) :<| queue) =
        & Seq.fromList
        & (queue ><)                           -- add to the end of the queue
        & bfs                                  -- process next item in queue
+bfs _ = Nothing
 
 solve :: World -> Maybe [World]
-solve w = bfs (Seq.singleton [w])
+solve w =
+  if True -- TODO
+  then bfs (Seq.singleton [w])
+  else dfs Set.empty w
 
 test01 :: World
 test01 = mkWorld
