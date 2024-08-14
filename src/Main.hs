@@ -6,6 +6,7 @@ import Data.Map (Map)
 import Data.Map qualified as Map
 import Data.Text (Text)
 import Data.Text (pack, unpack)
+import BridgeAndTorch qualified
 import FindPath qualified
 import MissionariesCannibals qualified
 import NPuzzle qualified
@@ -17,6 +18,7 @@ problems = Map.fromList
   [ (1, MissionariesCannibals.problem)
   , (2, NPuzzle.problem)
   , (3, FindPath.problem)
+  , (4, BridgeAndTorch.problem)
   ]
 
 menu ::

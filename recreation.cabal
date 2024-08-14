@@ -11,9 +11,10 @@ executable recreation
     import:           warnings
     main-is:          Main.hs
     other-modules:
+        BridgeAndTorch,
+        FindPath,
         MissionariesCannibals,
         NPuzzle,
-        FindPath,
         Problem,
     build-depends:
       base ^>=4.18.2.0,
