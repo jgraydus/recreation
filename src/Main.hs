@@ -1,6 +1,5 @@
 module Main where
 
-import Control.Monad.IO.Class (liftIO)
 import Data.Foldable (for_)
 import Data.Map (Map)
 import Data.Map qualified as Map
@@ -11,6 +10,7 @@ import FindPath qualified
 import MissionariesCannibals qualified
 import NPuzzle qualified
 import Problem
+import Sokoban qualified
 import System.Terminal
 
 problems :: Map Int Problem
@@ -19,6 +19,7 @@ problems = Map.fromList
   , (2, NPuzzle.problem)
   , (3, FindPath.problem)
   , (4, BridgeAndTorch.problem)
+  , (5, Sokoban.problem)
   ]
 
 menu ::
@@ -64,17 +65,22 @@ menu selected info = do
           _ -> handleInput
   handleInput
 
-main :: IO ()
-main = withTerminal $ runTerminalT $ do
+getProgram :: IO (IO ())
+getProgram = withTerminal $ runTerminalT $ do
   hideCursor
   setAlternateScreenBuffer True
   selection <- menu 1 Nothing
   showCursor
   setAlternateScreenBuffer False
   case Map.lookup selection problems of
-    Nothing -> pure ()
+    Nothing -> error "program not found"
     Just Problem { label, run } ->
-      liftIO $ do
+      pure $ do
         putStrLn $ unpack label
         run
+
+main :: IO ()
+main = do
+  program <- getProgram
+  program
 
