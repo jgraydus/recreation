@@ -7,6 +7,7 @@ import Data.Text (Text)
 import Data.Text (pack, unpack)
 import BridgeAndTorch qualified
 import FindPath qualified
+import GloveSelection qualified
 import MissionariesCannibals qualified
 import NPuzzle qualified
 import Problem
@@ -20,6 +21,7 @@ problems = Map.fromList
   , (3, FindPath.problem)
   , (4, BridgeAndTorch.problem)
   , (5, Sokoban.problem)
+  , (6, GloveSelection.problem)
   ]
 
 menu ::

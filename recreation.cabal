@@ -13,6 +13,7 @@ executable recreation
     other-modules:
         BridgeAndTorch,
         FindPath,
+        GloveSelection,
         MissionariesCannibals,
         NPuzzle,
         Problem,
