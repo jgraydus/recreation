@@ -2,10 +2,8 @@
 module MissionariesCannibals ( problem ) where
 
 import Data.Function ((&))
-import Data.Maybe
-import Data.Set (Set)
-import Data.Set qualified as Set
 import Problem
+import Search qualified
 
 data Boat = North | South
   deriving (Eq, Ord, Show)
@@ -41,17 +39,8 @@ goal = World
 
 type Solution = [World]
 
-solve' :: Set World -> World -> Maybe Solution
-solve' visited w =
-  if w == goal then Just [w] else
-  if Set.member w visited then Nothing
-  else map (solve' $ Set.insert w visited) (neighbors w)
-       & catMaybes
-       & listToMaybe
-       & fmap (w:)
-
 solve :: World -> Maybe Solution
-solve = solve' Set.empty
+solve = Search.bfs (== goal) neighbors
 
 neighbors :: World -> [World]
 neighbors w = worldDiffs w & map (applyDiff w) & filter isValid

@@ -16,15 +16,16 @@ executable recreation
         MissionariesCannibals,
         NPuzzle,
         Problem,
+        Search,
         Sokoban,
     build-depends:
-      base ^>=4.18.2.0,
-      containers,
-      mtl,
-      pqueue,
-      terminal,
-      text,
-      vector,
+        base ^>=4.18.2.0,
+        containers,
+        mtl,
+        pqueue,
+        terminal,
+        text,
+        vector,
     hs-source-dirs:   src
     default-language: GHC2021
     default-extensions:

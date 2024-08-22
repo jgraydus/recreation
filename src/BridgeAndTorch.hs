@@ -1,12 +1,9 @@
 module BridgeAndTorch ( problem ) where
 
-import Data.Function ((&))
 import Data.Map.Strict ((!), Map)
 import Data.Map.Strict qualified as Map
-import Data.Maybe (catMaybes, listToMaybe)
-import Data.Set (Set)
-import Data.Set qualified as Set
 import Problem
+import Search qualified
 
 type Person = String
 type TimeToCross = Int
@@ -31,8 +28,8 @@ data State = State
   , remainingTime :: Int
   } deriving (Eq, Ord, Show)
 
-extend :: Map Person TimeToCross -> Set State -> State -> [State]
-extend m v s =
+neighbors :: Map Person TimeToCross -> State -> [State]
+neighbors m s =
   let peopleList = Map.toList s.people
       opp = if s.torch == North then South else North
       onePersonCrossing =
@@ -51,7 +48,7 @@ extend m v s =
         , loc1 == s.torch
         , loc2 == s.torch
         ]
-  in filter (\s0 -> s0.remainingTime >= 0 && Set.notMember s0 v)
+  in filter (\s0 -> s0.remainingTime >= 0)
             (onePersonCrossing <> twoPeopleCrossing)
 
 isGoal :: State -> Bool
@@ -64,14 +61,7 @@ solve ProblemInstance { people, timeLimit } =
   let start = State { people = Map.fromList $ map (, South) (Map.keys people)
                     , torch = South
                     , remainingTime = timeLimit }
-      go v s = if isGoal s then Just [s]
-               else extend people v s
-                    & fmap (go $ Set.insert s v)
-                    & catMaybes
-                    & listToMaybe
-                    & fmap (s:)
-
-  in go Set.empty start
+  in Search.bfs isGoal (neighbors people) start
 
 problem :: Problem
 problem = Problem

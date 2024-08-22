@@ -3,16 +3,13 @@ module NPuzzle ( problem ) where
 import Data.Function ((&))
 import Data.Functor.Identity (runIdentity)
 import Data.List (intercalate)
-import Data.Maybe (catMaybes, fromMaybe, listToMaybe)
-import Data.Set (Set)
-import Data.Set qualified as Set
-import Data.Sequence (Seq(..), (><))
-import Data.Sequence qualified as Seq
+import Data.Maybe (fromMaybe)
 import Data.Vector.Unboxed (Vector)
 import Data.Vector.Generic ((!),(//))
 import Data.Vector.Generic qualified as V
 import Data.Word (Word8)
 import Problem
+import Search qualified
 
 chunks :: Int -> [a] -> [[a]]
 chunks _ [] = []
@@ -24,7 +21,6 @@ data World = World
   , width :: !Int
   , height :: !Int
   } deriving (Eq, Ord)
-
 
 -- TODO verify validity
 mkWorld :: [[Word8]] -> World
@@ -64,32 +60,8 @@ isGoal World { dat } = V.ifoldl' (\acc i x -> i == fromIntegral x && acc) True d
 
 type Solution = [World]
 
-dfs :: Set World -> World -> Maybe Solution
-dfs visited w =
-  if isGoal w then Just [w]
-  else if Set.member w visited then Nothing
-  else neighbors w                            -- compute the neighboring worlds
-       & fmap (dfs $ Set.insert w visited)    -- recursively search each
-       & catMaybes                            -- remove failed searches
-       & listToMaybe                          -- take the first success
-       & fmap (w:)                            -- add the current world to the path
-
-bfs :: Seq [World] -> Maybe Solution
-bfs (s@(w:_) :<| queue) =
-  if isGoal w then Just (reverse s)
-  else neighbors w                            -- compute the neighbors
-       & filter (not . flip elem s)           -- discards cycles (neighbors already in the path)
-       & map (:s)                             -- for each neighbor, extend the path with that neighbor
-       & Seq.fromList
-       & (queue ><)                           -- add to the end of the queue
-       & bfs                                  -- process next item in queue
-bfs _ = Nothing
-
-solve :: World -> Maybe [World]
-solve w =
-  if True -- TODO
-  then bfs (Seq.singleton [w])
-  else dfs Set.empty w
+solve :: World -> Maybe Solution
+solve = Search.bfs isGoal neighbors
 
 test01 :: World
 test01 = mkWorld
