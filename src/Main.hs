@@ -11,17 +11,19 @@ import GloveSelection qualified
 import MissionariesCannibals qualified
 import NPuzzle qualified
 import Problem
+import RowAndColumnExchanges qualified
 import Sokoban qualified
 import System.Terminal
 
 problems :: Map Int Problem
-problems = Map.fromList
-  [ (1, MissionariesCannibals.problem)
-  , (2, NPuzzle.problem)
-  , (3, FindPath.problem)
-  , (4, BridgeAndTorch.problem)
-  , (5, Sokoban.problem)
-  , (6, GloveSelection.problem)
+problems = Map.fromList $ zip [1..]
+  [ MissionariesCannibals.problem
+  , NPuzzle.problem
+  , FindPath.problem
+  , BridgeAndTorch.problem
+  , Sokoban.problem
+  , GloveSelection.problem
+  , RowAndColumnExchanges.problem
   ]
 
 menu ::

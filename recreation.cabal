@@ -17,6 +17,7 @@ executable recreation
         MissionariesCannibals,
         NPuzzle,
         Problem,
+        RowAndColumnExchanges,
         Search,
         Sokoban,
     build-depends:
